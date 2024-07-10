@@ -34,7 +34,7 @@ const moduleName = 'OCPP16RequestService'
 export class OCPP16RequestService extends OCPPRequestService {
   protected payloadValidateFunctions: Map<OCPP16RequestCommand, ValidateFunction<JsonType>>
 
-  public constructor (ocppResponseService: OCPPResponseService) {
+  public constructor(ocppResponseService: OCPPResponseService) {
     // if (new.target.name === moduleName) {
     //   throw new TypeError(`Cannot construct ${new.target.name} instances directly`)
     // }
@@ -182,10 +182,15 @@ export class OCPP16RequestService extends OCPPRequestService {
           )
           break
       }
+      // console.log({ connector: chargingStation.connectors.get(1)?.MeterValues, commandName, commandParams, params });
+
+      const payLoad = this.buildRequestPayload<RequestType>(chargingStation, commandName, commandParams)
+      console.log(commandName, JSON.stringify(payLoad, null, 2));
+
       return (await this.sendMessage(
         chargingStation,
         generateUUID(),
-        this.buildRequestPayload<RequestType>(chargingStation, commandName, commandParams),
+        payLoad,
         commandName,
         params
       )) as ResponseType
@@ -206,7 +211,8 @@ export class OCPP16RequestService extends OCPPRequestService {
   ): Request {
     let connectorId: number | undefined
     let energyActiveImportRegister: number
-    commandParams = commandParams as JsonObject
+    commandParams = commandParams as JsonObject;
+
     switch (commandName) {
       case OCPP16RequestCommand.BOOT_NOTIFICATION:
       case OCPP16RequestCommand.DIAGNOSTICS_STATUS_NOTIFICATION:
@@ -246,10 +252,12 @@ export class OCPP16RequestService extends OCPPRequestService {
           ...commandParams
         } as unknown as Request
       case OCPP16RequestCommand.STOP_TRANSACTION:
-        chargingStation.stationInfo?.transactionDataMeterValues === true &&
-          (connectorId = chargingStation.getConnectorIdByTransactionId(
+        if (chargingStation.stationInfo?.transactionDataMeterValues === true) {
+          connectorId = chargingStation.getConnectorIdByTransactionId(
             commandParams.transactionId as number
-          ))
+          )
+        }
+
         energyActiveImportRegister = chargingStation.getEnergyActiveImportRegisterByTransactionId(
           commandParams.transactionId as number,
           true
@@ -266,7 +274,9 @@ export class OCPP16RequestService extends OCPPRequestService {
                 chargingStation,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 connectorId!,
-                energyActiveImportRegister
+                chargingStation.getEnergyActiveImportRegisterByTransactionId(
+                  commandParams.transactionId as number
+                )
               )
             )
           }),

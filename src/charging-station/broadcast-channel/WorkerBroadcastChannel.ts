@@ -11,27 +11,27 @@ import { logger, logPrefix, validateUUID } from '../../utils/index.js'
 const moduleName = 'WorkerBroadcastChannel'
 
 export abstract class WorkerBroadcastChannel extends BroadcastChannel {
-  protected constructor () {
+  protected constructor() {
     super('worker')
   }
 
-  public sendRequest (request: BroadcastChannelRequest): void {
+  public sendRequest(request: BroadcastChannelRequest): void {
     this.postMessage(request)
   }
 
-  protected sendResponse (response: BroadcastChannelResponse): void {
+  protected sendResponse(response: BroadcastChannelResponse): void {
     this.postMessage(response)
   }
 
-  protected isRequest (message: JsonType[]): boolean {
+  protected isRequest(message: JsonType[]): boolean {
     return Array.isArray(message) && message.length === 3
   }
 
-  protected isResponse (message: JsonType[]): boolean {
+  protected isResponse(message: JsonType[]): boolean {
     return Array.isArray(message) && message.length === 2
   }
 
-  protected validateMessageEvent (messageEvent: MessageEvent): MessageEvent | false {
+  protected validateMessageEvent(messageEvent: MessageEvent): MessageEvent | false {
     if (!Array.isArray(messageEvent.data)) {
       logger.error(
         `${this.logPrefix(

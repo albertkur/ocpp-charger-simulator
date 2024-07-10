@@ -63,7 +63,7 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
   private readonly commandHandlers: Map<BroadcastChannelProcedureName, CommandHandler>
   private readonly chargingStation: ChargingStation
 
-  constructor (chargingStation: ChargingStation) {
+  constructor(chargingStation: ChargingStation) {
     super()
     const requestParams: RequestParams = {
       throwError: true
@@ -121,16 +121,18 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
         BroadcastChannelProcedureName.START_TRANSACTION,
         async (requestPayload?: BroadcastChannelRequestPayload) =>
           await this.chargingStation.ocppRequestService.requestHandler<
-          StartTransactionRequest,
-          StartTransactionResponse
+            StartTransactionRequest,
+            StartTransactionResponse
           >(this.chargingStation, RequestCommand.START_TRANSACTION, requestPayload, requestParams)
       ],
       [
         BroadcastChannelProcedureName.STOP_TRANSACTION,
-        async (requestPayload?: BroadcastChannelRequestPayload) =>
-          await this.chargingStation.ocppRequestService.requestHandler<
-          StopTransactionRequest,
-          StartTransactionResponse
+        async (requestPayload?: BroadcastChannelRequestPayload) => {
+          // console.log("COMMAND HANDLER", { requestPayload });
+
+          return await this.chargingStation.ocppRequestService.requestHandler<
+            StopTransactionRequest,
+            StartTransactionResponse
           >(
             this.chargingStation,
             RequestCommand.STOP_TRANSACTION,
@@ -142,22 +144,23 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
               ...requestPayload
             },
             requestParams
-          )
+          );
+        }
       ],
       [
         BroadcastChannelProcedureName.AUTHORIZE,
         async (requestPayload?: BroadcastChannelRequestPayload) =>
           await this.chargingStation.ocppRequestService.requestHandler<
-          AuthorizeRequest,
-          AuthorizeResponse
+            AuthorizeRequest,
+            AuthorizeResponse
           >(this.chargingStation, RequestCommand.AUTHORIZE, requestPayload, requestParams)
       ],
       [
         BroadcastChannelProcedureName.BOOT_NOTIFICATION,
         async (requestPayload?: BroadcastChannelRequestPayload) => {
           return await this.chargingStation.ocppRequestService.requestHandler<
-          BootNotificationRequest,
-          BootNotificationResponse
+            BootNotificationRequest,
+            BootNotificationResponse
           >(
             this.chargingStation,
             RequestCommand.BOOT_NOTIFICATION,
@@ -176,16 +179,16 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
         BroadcastChannelProcedureName.STATUS_NOTIFICATION,
         async (requestPayload?: BroadcastChannelRequestPayload) =>
           await this.chargingStation.ocppRequestService.requestHandler<
-          StatusNotificationRequest,
-          StatusNotificationResponse
+            StatusNotificationRequest,
+            StatusNotificationResponse
           >(this.chargingStation, RequestCommand.STATUS_NOTIFICATION, requestPayload, requestParams)
       ],
       [
         BroadcastChannelProcedureName.HEARTBEAT,
         async (requestPayload?: BroadcastChannelRequestPayload) =>
           await this.chargingStation.ocppRequestService.requestHandler<
-          HeartbeatRequest,
-          HeartbeatResponse
+            HeartbeatRequest,
+            HeartbeatResponse
           >(this.chargingStation, RequestCommand.HEARTBEAT, requestPayload, requestParams)
       ],
       [
@@ -196,8 +199,8 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
             StandardParametersKey.MeterValueSampleInterval
           )
           return await this.chargingStation.ocppRequestService.requestHandler<
-          MeterValuesRequest,
-          MeterValuesResponse
+            MeterValuesRequest,
+            MeterValuesResponse
           >(
             this.chargingStation,
             RequestCommand.METER_VALUES,
@@ -225,16 +228,16 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
         BroadcastChannelProcedureName.DATA_TRANSFER,
         async (requestPayload?: BroadcastChannelRequestPayload) =>
           await this.chargingStation.ocppRequestService.requestHandler<
-          DataTransferRequest,
-          DataTransferResponse
+            DataTransferRequest,
+            DataTransferResponse
           >(this.chargingStation, RequestCommand.DATA_TRANSFER, requestPayload, requestParams)
       ],
       [
         BroadcastChannelProcedureName.DIAGNOSTICS_STATUS_NOTIFICATION,
         async (requestPayload?: BroadcastChannelRequestPayload) =>
           await this.chargingStation.ocppRequestService.requestHandler<
-          DiagnosticsStatusNotificationRequest,
-          DiagnosticsStatusNotificationResponse
+            DiagnosticsStatusNotificationRequest,
+            DiagnosticsStatusNotificationResponse
           >(
             this.chargingStation,
             RequestCommand.DIAGNOSTICS_STATUS_NOTIFICATION,
@@ -246,8 +249,8 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
         BroadcastChannelProcedureName.FIRMWARE_STATUS_NOTIFICATION,
         async (requestPayload?: BroadcastChannelRequestPayload) =>
           await this.chargingStation.ocppRequestService.requestHandler<
-          FirmwareStatusNotificationRequest,
-          FirmwareStatusNotificationResponse
+            FirmwareStatusNotificationRequest,
+            FirmwareStatusNotificationResponse
           >(
             this.chargingStation,
             RequestCommand.FIRMWARE_STATUS_NOTIFICATION,
@@ -261,8 +264,10 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
     this.onmessageerror = this.messageErrorHandler.bind(this) as (message: unknown) => void
   }
 
-  private requestHandler (messageEvent: MessageEvent): void {
-    const validatedMessageEvent = this.validateMessageEvent(messageEvent)
+  private requestHandler(messageEvent: MessageEvent): void {
+
+    const validatedMessageEvent = this.validateMessageEvent(messageEvent);
+
     if (validatedMessageEvent === false) {
       return
     }
@@ -270,6 +275,9 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
       return
     }
     const [uuid, command, requestPayload] = validatedMessageEvent.data as BroadcastChannelRequest
+
+    console.log("requestHandler", { messageEvent, validatedMessageEvent, uuid, command, requestPayload });
+
     if (
       requestPayload.hashIds != null &&
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -320,18 +328,20 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
       })
   }
 
-  private messageErrorHandler (messageEvent: MessageEvent): void {
+  private messageErrorHandler(messageEvent: MessageEvent): void {
     logger.error(
       `${this.chargingStation.logPrefix()} ${moduleName}.messageErrorHandler: Error at handling message:`,
       messageEvent
     )
   }
 
-  private async commandHandler (
+  private async commandHandler(
     command: BroadcastChannelProcedureName,
     requestPayload: BroadcastChannelRequestPayload
     // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   ): Promise<CommandResponse | void> {
+    console.log("commandHandler", { command, requestPayload });
+
     if (this.commandHandlers.has(command)) {
       this.cleanRequestPayload(command, requestPayload)
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -349,7 +359,7 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
     throw new BaseError(`Unknown worker broadcast channel command: '${command}'`)
   }
 
-  private cleanRequestPayload (
+  private cleanRequestPayload(
     command: BroadcastChannelProcedureName,
     requestPayload: BroadcastChannelRequestPayload
   ): void {
@@ -361,7 +371,7 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
     ].includes(command) && delete requestPayload.connectorIds
   }
 
-  private commandResponseToResponsePayload (
+  private commandResponseToResponsePayload(
     command: BroadcastChannelProcedureName,
     requestPayload: BroadcastChannelRequestPayload,
     commandResponse: CommandResponse
@@ -382,7 +392,7 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
     }
   }
 
-  private commandResponseToResponseStatus (
+  private commandResponseToResponseStatus(
     command: BroadcastChannelProcedureName,
     commandResponse: CommandResponse
   ): ResponseStatus {
@@ -393,9 +403,9 @@ export class ChargingStationWorkerBroadcastChannel extends WorkerBroadcastChanne
         if (
           (
             commandResponse as
-              | StartTransactionResponse
-              | StopTransactionResponse
-              | AuthorizeResponse
+            | StartTransactionResponse
+            | StopTransactionResponse
+            | AuthorizeResponse
           ).idTagInfo?.status === AuthorizationStatus.ACCEPTED
         ) {
           return ResponseStatus.SUCCESS

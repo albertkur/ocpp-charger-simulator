@@ -86,7 +86,7 @@ export interface OCPP16SampledValue extends JsonObject {
   value: string
   unit?: OCPP16MeterValueUnit
   context?: OCPP16MeterValueContext
-  measurand?: OCPP16MeterValueMeasurand
+  measurand: OCPP16MeterValueMeasurand
   phase?: OCPP16MeterValuePhase
   location?: OCPP16MeterValueLocation
   format?: OCPP16MeterValueFormat

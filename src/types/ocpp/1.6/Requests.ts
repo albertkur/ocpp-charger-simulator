@@ -62,7 +62,7 @@ export interface OCPP16StatusNotificationRequest extends JsonObject {
   errorCode: OCPP16ChargePointErrorCode
   status: OCPP16ChargePointStatus
   info?: string
-  timestamp?: Date
+  timestamp: Date
   vendorId?: string
   vendorErrorCode?: string
 }
@@ -178,7 +178,7 @@ export interface OCPP16TriggerMessageRequest extends JsonObject {
   connectorId?: number
 }
 
-export enum OCPP16DataTransferVendorId {}
+export enum OCPP16DataTransferVendorId { }
 
 export interface OCPP16DataTransferRequest extends JsonObject {
   vendorId: string
