@@ -59,14 +59,14 @@ const moduleName = 'OCPP16ResponseService'
 
 export class OCPP16ResponseService extends OCPPResponseService {
   public incomingRequestResponsePayloadValidateFunctions: Map<
-  OCPP16IncomingRequestCommand,
-  ValidateFunction<JsonType>
+    OCPP16IncomingRequestCommand,
+    ValidateFunction<JsonType>
   >
 
   protected payloadValidateFunctions: Map<OCPP16RequestCommand, ValidateFunction<JsonType>>
   private readonly responseHandlers: Map<OCPP16RequestCommand, ResponseHandler>
 
-  public constructor () {
+  public constructor() {
     // if (new.target.name === moduleName) {
     //   throw new TypeError(`Cannot construct ${new.target.name} instances directly`)
     // }
@@ -221,8 +221,8 @@ export class OCPP16ResponseService extends OCPPResponseService {
       ]
     ])
     this.incomingRequestResponsePayloadValidateFunctions = new Map<
-    OCPP16IncomingRequestCommand,
-    ValidateFunction<JsonType>
+      OCPP16IncomingRequestCommand,
+      ValidateFunction<JsonType>
     >([
       [
         OCPP16IncomingRequestCommand.RESET,
@@ -492,7 +492,7 @@ export class OCPP16ResponseService extends OCPPResponseService {
     }
   }
 
-  private validatePayload (
+  private validatePayload(
     chargingStation: ChargingStation,
     commandName: OCPP16RequestCommand,
     payload: JsonType
@@ -506,7 +506,7 @@ export class OCPP16ResponseService extends OCPPResponseService {
     return false
   }
 
-  private handleResponseBootNotification (
+  private handleResponseBootNotification(
     chargingStation: ChargingStation,
     payload: OCPP16BootNotificationResponse
   ): void {
@@ -534,9 +534,8 @@ export class OCPP16ResponseService extends OCPPResponseService {
       } else if (chargingStation.inRejectedState()) {
         chargingStation.emit(ChargingStationEvents.rejected)
       }
-      const logMsg = `${chargingStation.logPrefix()} Charging station in '${
-        payload.status
-      }' state on the central server`
+      const logMsg = `${chargingStation.logPrefix()} Charging station in '${payload.status
+        }' state on the central server`
       payload.status === RegistrationStatusEnumType.REJECTED
         ? logger.warn(logMsg)
         : logger.info(logMsg)
@@ -549,7 +548,7 @@ export class OCPP16ResponseService extends OCPPResponseService {
     }
   }
 
-  private handleResponseAuthorize (
+  private handleResponseAuthorize(
     chargingStation: ChargingStation,
     payload: OCPP16AuthorizeResponse,
     requestPayload: OCPP16AuthorizeRequest
@@ -583,29 +582,26 @@ export class OCPP16ResponseService extends OCPPResponseService {
       if (payload.idTagInfo.status === OCPP16AuthorizationStatus.ACCEPTED) {
         authorizeConnectorStatus.idTagAuthorized = true
         logger.debug(
-          `${chargingStation.logPrefix()} idTag '${
-            requestPayload.idTag
+          `${chargingStation.logPrefix()} idTag '${requestPayload.idTag
           }' accepted on connector id ${authorizeConnectorId}`
         )
       } else {
         authorizeConnectorStatus.idTagAuthorized = false
         delete authorizeConnectorStatus.authorizeIdTag
         logger.debug(
-          `${chargingStation.logPrefix()} idTag '${
-            requestPayload.idTag
+          `${chargingStation.logPrefix()} idTag '${requestPayload.idTag
           }' rejected with status '${payload.idTagInfo.status}'`
         )
       }
     } else {
       logger.error(
-        `${chargingStation.logPrefix()} idTag '${
-          requestPayload.idTag
+        `${chargingStation.logPrefix()} idTag '${requestPayload.idTag
         }' has no authorize request pending`
       )
     }
   }
 
-  private async handleResponseStartTransaction (
+  private async handleResponseStartTransaction(
     chargingStation: ChargingStation,
     payload: OCPP16StartTransactionResponse,
     requestPayload: OCPP16StartTransactionRequest
@@ -626,8 +622,7 @@ export class OCPP16ResponseService extends OCPPResponseService {
       connectorStatus.idTagLocalAuthorized === false
     ) {
       logger.error(
-        `${chargingStation.logPrefix()} Trying to start a transaction with a not local authorized idTag ${
-          connectorStatus.localAuthorizeIdTag
+        `${chargingStation.logPrefix()} Trying to start a transaction with a not local authorized idTag ${connectorStatus.localAuthorizeIdTag
         } on connector id ${connectorId}`
       )
       await this.resetConnectorOnStartTransactionError(chargingStation, connectorId)
@@ -641,8 +636,7 @@ export class OCPP16ResponseService extends OCPPResponseService {
       connectorStatus.idTagAuthorized === false
     ) {
       logger.error(
-        `${chargingStation.logPrefix()} Trying to start a transaction with a not authorized idTag ${
-          connectorStatus.authorizeIdTag
+        `${chargingStation.logPrefix()} Trying to start a transaction with a not authorized idTag ${connectorStatus.authorizeIdTag
         } on connector id ${connectorId}`
       )
       await this.resetConnectorOnStartTransactionError(chargingStation, connectorId)
@@ -654,10 +648,8 @@ export class OCPP16ResponseService extends OCPPResponseService {
       connectorStatus.authorizeIdTag !== requestPayload.idTag
     ) {
       logger.error(
-        `${chargingStation.logPrefix()} Trying to start a transaction with an idTag ${
-          requestPayload.idTag
-        } different from the authorize request one ${
-          connectorStatus.authorizeIdTag
+        `${chargingStation.logPrefix()} Trying to start a transaction with an idTag ${requestPayload.idTag
+        } different from the authorize request one ${connectorStatus.authorizeIdTag
         } on connector id ${connectorId}`
       )
       await this.resetConnectorOnStartTransactionError(chargingStation, connectorId)
@@ -669,10 +661,8 @@ export class OCPP16ResponseService extends OCPPResponseService {
       connectorStatus.localAuthorizeIdTag !== requestPayload.idTag
     ) {
       logger.error(
-        `${chargingStation.logPrefix()} Trying to start a transaction with an idTag ${
-          requestPayload.idTag
-        } different from the local authorized one ${
-          connectorStatus.localAuthorizeIdTag
+        `${chargingStation.logPrefix()} Trying to start a transaction with an idTag ${requestPayload.idTag
+        } different from the local authorized one ${connectorStatus.localAuthorizeIdTag
         } on connector id ${connectorId}`
       )
       await this.resetConnectorOnStartTransactionError(chargingStation, connectorId)
@@ -680,8 +670,7 @@ export class OCPP16ResponseService extends OCPPResponseService {
     }
     if (connectorStatus?.transactionStarted === true) {
       logger.error(
-        `${chargingStation.logPrefix()} Trying to start a transaction on an already used connector id ${connectorId} by idTag ${
-          connectorStatus.transactionIdTag
+        `${chargingStation.logPrefix()} Trying to start a transaction on an already used connector id ${connectorId} by idTag ${connectorStatus.transactionIdTag
         }`
       )
       return
@@ -692,8 +681,7 @@ export class OCPP16ResponseService extends OCPPResponseService {
           for (const [id, status] of evseStatus.connectors) {
             if (id !== connectorId && status.transactionStarted === true) {
               logger.error(
-                `${chargingStation.logPrefix()} Trying to start a transaction on an already used evse id ${evseId} by connector id ${id} with idTag ${
-                  status.transactionIdTag
+                `${chargingStation.logPrefix()} Trying to start a transaction on an already used evse id ${evseId} by connector id ${id} with idTag ${status.transactionIdTag
                 }`
               )
               await this.resetConnectorOnStartTransactionError(chargingStation, connectorId)
@@ -708,16 +696,14 @@ export class OCPP16ResponseService extends OCPPResponseService {
       connectorStatus?.status !== OCPP16ChargePointStatus.Preparing
     ) {
       logger.error(
-        `${chargingStation.logPrefix()} Trying to start a transaction on connector id ${connectorId} with status ${
-          connectorStatus?.status
+        `${chargingStation.logPrefix()} Trying to start a transaction on connector id ${connectorId} with status ${connectorStatus?.status
         }`
       )
       return
     }
     if (!Number.isSafeInteger(payload.transactionId)) {
       logger.warn(
-        `${chargingStation.logPrefix()} Trying to start a transaction on connector id ${connectorId} with a non integer transaction id ${
-          payload.transactionId
+        `${chargingStation.logPrefix()} Trying to start a transaction on connector id ${connectorId} with a non integer transaction id ${payload.transactionId
         }, converting to integer`
       )
       payload.transactionId = convertToInt(payload.transactionId)
@@ -743,19 +729,15 @@ export class OCPP16ResponseService extends OCPPResponseService {
         if (reservation != null) {
           if (reservation.idTag !== requestPayload.idTag) {
             logger.warn(
-              `${chargingStation.logPrefix()} Reserved transaction ${
-                payload.transactionId
-              } started with a different idTag ${
-                requestPayload.idTag
+              `${chargingStation.logPrefix()} Reserved transaction ${payload.transactionId
+              } started with a different idTag ${requestPayload.idTag
               } than the reservation one ${reservation.idTag}`
             )
           }
           if (hasReservationExpired(reservation)) {
             logger.warn(
-              `${chargingStation.logPrefix()} Reserved transaction ${
-                payload.transactionId
-              } started with expired reservation ${
-                requestPayload.reservationId
+              `${chargingStation.logPrefix()} Reserved transaction ${payload.transactionId
+              } started with expired reservation ${requestPayload.reservationId
               } (expiry date: ${reservation.expiryDate.toISOString()}))`
             )
           }
@@ -765,16 +747,15 @@ export class OCPP16ResponseService extends OCPPResponseService {
           )
         } else {
           logger.warn(
-            `${chargingStation.logPrefix()} Reserved transaction ${
-              payload.transactionId
+            `${chargingStation.logPrefix()} Reserved transaction ${payload.transactionId
             } started with unknown reservation ${requestPayload.reservationId}`
           )
         }
       }
       chargingStation.stationInfo?.beginEndMeterValues === true &&
         (await chargingStation.ocppRequestService.requestHandler<
-        OCPP16MeterValuesRequest,
-        OCPP16MeterValuesResponse
+          OCPP16MeterValuesRequest,
+          OCPP16MeterValuesResponse
         >(chargingStation, OCPP16RequestCommand.METER_VALUES, {
           connectorId,
           transactionId: payload.transactionId,
@@ -786,8 +767,7 @@ export class OCPP16ResponseService extends OCPPResponseService {
         OCPP16ChargePointStatus.Charging
       )
       logger.info(
-        `${chargingStation.logPrefix()} Transaction with id ${payload.transactionId} STARTED on ${
-          chargingStation.stationInfo?.chargingStationId
+        `${chargingStation.logPrefix()} Transaction with id ${payload.transactionId} STARTED on ${chargingStation.stationInfo?.chargingStationId
         }#${connectorId} for idTag '${requestPayload.idTag}'`
       )
       if (chargingStation.stationInfo?.powerSharedByConnectors === true) {
@@ -806,23 +786,19 @@ export class OCPP16ResponseService extends OCPPResponseService {
       )
     } else {
       logger.warn(
-        `${chargingStation.logPrefix()} Starting transaction with id ${
-          payload.transactionId
-        } REJECTED on ${
-          chargingStation.stationInfo?.chargingStationId
-        }#${connectorId} with status '${payload.idTagInfo.status}', idTag '${
-          requestPayload.idTag
-        }'${
-          OCPP16ServiceUtils.hasReservation(chargingStation, connectorId, requestPayload.idTag)
-            ? `, reservationId '${requestPayload.reservationId}'`
-            : ''
+        `${chargingStation.logPrefix()} Starting transaction with id ${payload.transactionId
+        } REJECTED on ${chargingStation.stationInfo?.chargingStationId
+        }#${connectorId} with status '${payload.idTagInfo.status}', idTag '${requestPayload.idTag
+        }'${OCPP16ServiceUtils.hasReservation(chargingStation, connectorId, requestPayload.idTag)
+          ? `, reservationId '${requestPayload.reservationId}'`
+          : ''
         }`
       )
       await this.resetConnectorOnStartTransactionError(chargingStation, connectorId)
     }
   }
 
-  private async resetConnectorOnStartTransactionError (
+  private async resetConnectorOnStartTransactionError(
     chargingStation: ChargingStation,
     connectorId: number
   ): Promise<void> {
@@ -832,18 +808,19 @@ export class OCPP16ResponseService extends OCPPResponseService {
     await OCPP16ServiceUtils.restoreConnectorStatus(chargingStation, connectorId, connectorStatus)
   }
 
-  private async handleResponseStopTransaction (
+  private async handleResponseStopTransaction(
     chargingStation: ChargingStation,
     payload: OCPP16StopTransactionResponse,
     requestPayload: OCPP16StopTransactionRequest
   ): Promise<void> {
+    console.log("handleResponseStopTransaction", { requestPayload });
+
     const transactionConnectorId = chargingStation.getConnectorIdByTransactionId(
       requestPayload.transactionId
     )
     if (transactionConnectorId == null) {
       logger.error(
-        `${chargingStation.logPrefix()} Trying to stop a non existing transaction with id ${
-          requestPayload.transactionId
+        `${chargingStation.logPrefix()} Trying to stop a non existing transaction with id ${requestPayload.transactionId
         }`
       )
       return
@@ -852,8 +829,8 @@ export class OCPP16ResponseService extends OCPPResponseService {
       chargingStation.stationInfo.ocppStrictCompliance === false &&
       chargingStation.stationInfo.outOfOrderEndMeterValues === true &&
       (await chargingStation.ocppRequestService.requestHandler<
-      OCPP16MeterValuesRequest,
-      OCPP16MeterValuesResponse
+        OCPP16MeterValuesRequest,
+        OCPP16MeterValuesResponse
       >(chargingStation, OCPP16RequestCommand.METER_VALUES, {
         connectorId: transactionConnectorId,
         transactionId: requestPayload.transactionId,
@@ -887,11 +864,9 @@ export class OCPP16ResponseService extends OCPPResponseService {
     }
     resetConnectorStatus(chargingStation.getConnectorStatus(transactionConnectorId))
     chargingStation.stopMeterValues(transactionConnectorId)
-    const logMsg = `${chargingStation.logPrefix()} Transaction with id ${
-      requestPayload.transactionId
-    } STOPPED on ${
-      chargingStation.stationInfo?.chargingStationId
-    }#${transactionConnectorId} with status '${payload.idTagInfo?.status}'`
+    const logMsg = `${chargingStation.logPrefix()} Transaction with id ${requestPayload.transactionId
+      } STOPPED on ${chargingStation.stationInfo?.chargingStationId
+      }#${transactionConnectorId} with status '${payload.idTagInfo?.status}'`
     if (
       payload.idTagInfo == null ||
       payload.idTagInfo.status === OCPP16AuthorizationStatus.ACCEPTED

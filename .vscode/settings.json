@@ -1,5 +1,7 @@
 {
   "deno.enable": false,
+  "typescript.format.placeOpenBraceOnNewLineForControlBlocks": false,
+  "typescript.format.placeOpenBraceOnNewLineForFunctions": false,
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
   },

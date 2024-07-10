@@ -56,7 +56,7 @@ export interface OCPP16StopTransactionRequest extends JsonObject {
   timestamp: Date
   transactionId: number
   reason?: OCPP16StopTransactionReason
-  transactionData?: OCPP16MeterValue[]
+  transactionData: OCPP16MeterValue[]
 }
 
 export interface OCPP16StopTransactionResponse extends JsonObject {
