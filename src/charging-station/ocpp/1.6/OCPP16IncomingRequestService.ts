@@ -603,6 +603,8 @@ export class OCPP16IncomingRequestService extends OCPPIncomingRequestService {
     commandName: OCPP16IncomingRequestCommand,
     commandPayload: ReqType
   ): Promise<void> {
+    console.log('INCOMING REQUEST', { commandName, commandPayload })
+
     let response: ResType
     if (
       chargingStation.stationInfo?.ocppStrictCompliance === true &&

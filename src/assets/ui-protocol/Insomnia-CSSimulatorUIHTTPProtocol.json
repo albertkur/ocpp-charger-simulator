@@ -886,7 +886,7 @@
       "created": 1661789624972,
       "name": "CSSimulatorUIHTTProtocolEnvironment",
       "data": {
-        "baseUrl": "http://localhost:8080",
+        "baseUrl": "http://localhost:7080",
         "protocol": "ui",
         "version": "0.0.1",
         "username": "admin",

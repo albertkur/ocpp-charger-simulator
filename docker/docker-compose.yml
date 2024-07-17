@@ -13,6 +13,6 @@ services:
     networks:
       - ev_network
     expose:
-      - 8080
+      - 7080
     ports:
       - '3030:3030'

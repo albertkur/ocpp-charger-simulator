@@ -651,7 +651,7 @@
       "created": 1671183662528,
       "name": "CSSimulatorUIWSProtocolEnvironment",
       "data": {
-        "baseUrl": "ws://localhost:8080",
+        "baseUrl": "ws://localhost:7080",
         "username": "admin",
         "password": "admin",
         "protocol": "ui",

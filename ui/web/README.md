@@ -55,7 +55,7 @@ Copy the configuration template [src/assets/config-template.json](./src/assets/c
 {
   "uiServer": {
     "host": "localhost",
-    "port": 8080,
+    "port": 7080,
     "protocol": "ui",
     "version": "0.0.1",
     "authentication": {
@@ -75,7 +75,7 @@ Copy the configuration template [src/assets/config-template.json](./src/assets/c
   "uiServer": [
     {
       "host": "server1.domain.tld",
-      "port": 8080,
+      "port": 7080,
       "protocol": "ui",
       "version": "0.0.1",
       "authentication": {
@@ -88,7 +88,7 @@ Copy the configuration template [src/assets/config-template.json](./src/assets/c
     ...
     {
       "host": "serverN.domain.tld",
-      "port": 8080,
+      "port": 7080,
       "protocol": "ui",
       "version": "0.0.1",
       "authentication": {
